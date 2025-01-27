@@ -4,7 +4,6 @@ from tkinter import filedialog
 import customtkinter
 from yt_dlp import YoutubeDL
 
-# Default Settings
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("green")
 
@@ -109,29 +108,29 @@ url_var = tkinter.StringVar()
 link = customtkinter.CTkEntry(app, width=500, height=40, textvariable=url_var)
 link.pack()
 
-# Fetch Formats Button
+#fetch format button
 fetch_formats_btn = customtkinter.CTkButton(app, text="Fetch Formats", command=fetch_formats)
 fetch_formats_btn.pack(padx=10, pady=10)
 
-# Format List
+#construct format space/list
 format_label = customtkinter.CTkLabel(app, text="Available formats will appear here.")
 format_label.pack()
 
 format_listbox = tkinter.Listbox(app, width=70, height=10)
 format_listbox.pack(padx=10, pady=10)
 
-# Download Location Button
+#button for download location
 choose_folder_btn = customtkinter.CTkButton(app, text="Choose Download Folder", command=choose_download_location)
 choose_folder_btn.pack(padx=10, pady=10)
 
 location_label = customtkinter.CTkLabel(app, text="No folder selected", text_color="red")
 location_label.pack()
 
-# Download Button
+#download button
 download_btn = customtkinter.CTkButton(app, text="Download", command=start_download)
 download_btn.pack(padx=10, pady=10)
 
-# Progress Display
+#progress
 progress_label = customtkinter.CTkLabel(app, text="Progress: 0%")
 progress_label.pack()
 
@@ -142,5 +141,4 @@ progress_bar.pack(padx=10, pady=10)
 finish_label = customtkinter.CTkLabel(app, text="")
 finish_label.pack()
 
-# App Listening
 app.mainloop()
