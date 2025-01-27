@@ -1,3 +1,4 @@
+import threading
 import tkinter
 from tkinter import filedialog
 import customtkinter
@@ -10,6 +11,7 @@ customtkinter.set_default_color_theme("green")
 # Initialize global variables
 download_path = ""
 formats = []
+is_downloading = False  # Flag to track if a download is in progress
 
 
 def choose_download_location():
@@ -28,10 +30,7 @@ def fetch_formats():
         with YoutubeDL({'quiet': True}) as ydl:
             info = ydl.extract_info(yt_link, download=False)
             formats = info.get('formats', [])
-            format_options = [
-                f"{f['format_id']} - {f['ext']} - {f.get('resolution', 'audio-only')}"
-                for f in formats
-            ]
+            format_options = [f"{f['format_id']} - {f['ext']} - {f['resolution']}" for f in formats if 'resolution' in f]
             format_listbox.delete(0, tkinter.END)
             for option in format_options:
                 format_listbox.insert(tkinter.END, option)
@@ -40,29 +39,29 @@ def fetch_formats():
         format_label.configure(text=f"Error fetching formats: {str(e)}", text_color="red")
 
 
-def start_download():
-    global download_path, formats
+def download_video():
+    global is_downloading
     if not download_path:
         finish_label.configure(text="Please select a download folder!", text_color="red")
+        is_downloading = False
+        download_btn.configure(state="normal")
         return
 
     selected_format_index = format_listbox.curselection()
     if not selected_format_index:
         finish_label.configure(text="Please select a format!", text_color="red")
+        is_downloading = False
+        download_btn.configure(state="normal")
         return
 
-    selected_format = formats[selected_format_index[0]]
-    format_id = selected_format['format_id']
-
+    selected_format = formats[selected_format_index[0]]['format_id']
     try:
         yt_link = link.get()
-
-        # Download options
         ydl_opts = {
-            'format': f"{format_id}+bestaudio/best",
+            'format': f'{selected_format}+bestaudio/best',
             'outtmpl': f'{download_path}/%(title)s.%(ext)s',
-            'merge_output_format': 'mp4',  # Ensure the output is in a combined format
             'progress_hooks': [on_progress_hook],
+            # No postprocessors, to skip conversion
         }
 
         with YoutubeDL(ydl_opts) as ydl:
@@ -71,8 +70,21 @@ def start_download():
         finish_label.configure(text="Download Complete!", text_color="green")
     except Exception as e:
         finish_label.configure(text=f"Error: {str(e)}", text_color="red")
+    finally:
+        is_downloading = False
+        download_btn.configure(state="normal")
 
 
+def start_download():
+    global is_downloading
+    if is_downloading:
+        finish_label.configure(text="A download is already in progress!", text_color="red")
+        return
+
+    is_downloading = True
+    download_btn.configure(state="disabled")  # Disable the button
+    download_thread = threading.Thread(target=download_video)
+    download_thread.start()
 
 
 def on_progress_hook(d):
