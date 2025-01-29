@@ -20,7 +20,7 @@ ProxyDown is a sleek and user-friendly YouTube video downloader that simplifies 
    - [Download the latest release here](https://github.com/lanarkite99/YT_Downloader/blob/master/dist/main.exe).
 
 2. **Run the Application**  
-   - Double-click the `ProxyDown.exe` file to launch the app.
+   - Double-click the `main.exe` file to launch the app.
 
 3. **Download Videos**  
    - Paste a YouTube video link into the input field.  
@@ -40,7 +40,6 @@ If you are using the `.exe` file, no additional setup is required! Just download
 To run the Python source code, you will need:  
 - **Python 3.7 or higher**  
 - Required Python libraries:
-  ```bash
   pip install yt-dlp customtkinter
 ---
 
